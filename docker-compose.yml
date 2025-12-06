@@ -17,6 +17,7 @@ services:
       - APIM_DC=1
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -50,6 +51,7 @@ services:
       - APIM_DC=1
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -83,6 +85,7 @@ services:
       - APIM_DC=1
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -124,6 +127,7 @@ services:
       - APIM_DC=2
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -157,6 +161,7 @@ services:
       - APIM_DC=2
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -190,6 +195,7 @@ services:
       - APIM_DC=2
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -231,6 +237,7 @@ services:
       - APIM_DC=3
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -264,6 +271,7 @@ services:
       - APIM_DC=3
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -297,6 +305,7 @@ services:
       - APIM_DC=3
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -338,6 +347,7 @@ services:
       - APIM_DC=4
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -371,6 +381,7 @@ services:
       - APIM_DC=4
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -404,6 +415,7 @@ services:
       - APIM_DC=4
     networks:
       - wso2-network
+      - db_default
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -432,3 +444,5 @@ services:
 networks:
   wso2-network:
     driver: bridge
+  db_default:
+    external: true

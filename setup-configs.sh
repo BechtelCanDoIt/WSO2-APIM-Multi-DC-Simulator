@@ -48,7 +48,7 @@ create_admin_account = true
 
 [database.apim_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/apim_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -63,7 +63,7 @@ validationInterval = 30000
 
 [database.shared_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;llowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/shared_db?useSSL=false&amp;llowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -227,7 +227,7 @@ create_admin_account = true
 
 [database.apim_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/apim_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -242,7 +242,7 @@ validationInterval = 30000
 
 [database.shared_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/shared_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -343,7 +343,7 @@ create_admin_account = true
 
 [database.apim_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/apim_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -358,7 +358,7 @@ validationInterval = 30000
 
 [database.shared_db]
 type = "mysql"
-url = "jdbc:mysql://host.docker.internal:3306/wso2carbon?useSSL=false&amp;allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/shared_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"

@@ -8,7 +8,7 @@ services:
   wso2apim-cp-dc1:
     image: apim-cp:4.2.0
     container_name: wso2apim-cp-dc1
-    hostname: wso2apim-cp-dc1
+    hostname: localhost 
     ports:
       - "9443:9443"   # HTTPS Management
       - "9763:9763"   # HTTP Management
@@ -41,7 +41,7 @@ services:
   wso2apim-tm-dc1:
     image: apim-tm:4.2.0
     container_name: wso2apim-tm-dc1
-    hostname: wso2apim-tm-dc1
+    hostname: localhost
     ports:
       - "19611:9611"   # Binary data receiver
       - "19711:9711"   # Binary data receiver (SSL)
@@ -75,7 +75,7 @@ services:
   wso2apim-gw-dc1:
     image: apim-gw:4.2.0
     container_name: wso2apim-gw-dc1
-    hostname: wso2apim-gw-dc1
+    hostname: localhost
     ports:
       - "18280:8280"   # HTTP Gateway
       - "18243:8243"   # HTTPS Gateway
@@ -118,7 +118,7 @@ services:
   wso2apim-cp-dc2:
     image: apim-cp:4.2.0
     container_name: wso2apim-cp-dc2
-    hostname: wso2apim-cp-dc2
+    hostname: localhost
     ports:
       - "20443:9443"
       - "20763:9763"
@@ -151,7 +151,7 @@ services:
   wso2apim-tm-dc2:
     image: apim-tm:4.2.0
     container_name: wso2apim-tm-dc2
-    hostname: wso2apim-tm-dc2
+    hostname: localhost
     ports:
       - "20611:9611"
       - "20711:9711"
@@ -185,7 +185,7 @@ services:
   wso2apim-gw-dc2:
     image: apim-gw:4.2.0
     container_name: wso2apim-gw-dc2
-    hostname: wso2apim-gw-dc2
+    hostname: localhost
     ports:
       - "19280:8280"
       - "19243:8243"
@@ -228,7 +228,7 @@ services:
   wso2apim-cp-dc3:
     image: apim-cp:4.2.0
     container_name: wso2apim-cp-dc3
-    hostname: wso2apim-cp-dc3
+    hostname: localhost
     ports:
       - "21443:9443"
       - "21763:9763"
@@ -261,7 +261,7 @@ services:
   wso2apim-tm-dc3:
     image: apim-tm:4.2.0
     container_name: wso2apim-tm-dc3
-    hostname: wso2apim-tm-dc3
+    hostname: localhost
     ports:
       - "21611:9611"
       - "21711:9711"
@@ -295,7 +295,7 @@ services:
   wso2apim-gw-dc3:
     image: apim-gw:4.2.0
     container_name: wso2apim-gw-dc3
-    hostname: wso2apim-gw-dc3
+    hostname: localhost
     ports:
       - "20280:8280"
       - "20243:8243"
@@ -338,7 +338,7 @@ services:
   wso2apim-cp-dc4:
     image: apim-cp:4.2.0
     container_name: wso2apim-cp-dc4
-    hostname: wso2apim-cp-dc4
+    hostname: localhost
     ports:
       - "22443:9443"
       - "22763:9763"
@@ -371,7 +371,7 @@ services:
   wso2apim-tm-dc4:
     image: apim-tm:4.2.0
     container_name: wso2apim-tm-dc4
-    hostname: wso2apim-tm-dc4
+    hostname: localhost
     ports:
       - "22611:9611"
       - "22711:9711"
@@ -405,7 +405,7 @@ services:
   wso2apim-gw-dc4:
     image: apim-gw:4.2.0
     container_name: wso2apim-gw-dc4
-    hostname: wso2apim-gw-dc4
+    hostname: localhost
     ports:
       - "21280:8280"
       - "21243:8243"

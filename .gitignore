@@ -1,0 +1,31 @@
+# Docker generated files
+.docker/
+
+# Generated configurations (created by setup-configs.sh)
+config-templates/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Build artifacts
+*.tar
+*.tar.gz
+
+# Temporary files
+*.tmp
+*.temp

@@ -17,7 +17,7 @@ ENV API_M_HOME=/home/wso2carbon/wso2am-4.2.0
 COPY --from=builder ${API_M_HOME} ${API_M_HOME}
 # copy all config templates for every profile and dc
 COPY config-templates /config-templates
-# copy entrypoint
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+# copy entrypoint with executable permissions
+COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
+

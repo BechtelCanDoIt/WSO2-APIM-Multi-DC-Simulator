@@ -4,17 +4,17 @@
 .gitattributes
 
 # Documentation
-#*.md
-#README*
+*.md
+README*
 LICENSE
 
 # Docker files
-# docker-compose*.yml
-#.dockerignore
+docker-compose*.yml
+.dockerignore
 
 # Build scripts (not needed in image)
-#build.sh
-#setup-configs.sh
+build.sh
+setup-configs.sh
 
 # IDE and editor files
 .vscode

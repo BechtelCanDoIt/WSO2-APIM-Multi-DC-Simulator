@@ -1,0 +1,434 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Datacenter 1
+  # ============================================
+  
+  wso2apim-cp-dc1:
+    image: apim-cp:4.2.0
+    container_name: wso2apim-cp-dc1
+    hostname: wso2apim-cp-dc1
+    ports:
+      - "19443:9443"   # HTTPS Management
+      - "19763:9763"   # HTTP Management
+    environment:
+      - APIM_PROFILE=cp
+      - APIM_DC=1
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9443/carbon/admin/login.jsp", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-tm-dc1:
+    image: apim-tm:4.2.0
+    container_name: wso2apim-tm-dc1
+    hostname: wso2apim-tm-dc1
+    ports:
+      - "19611:9611"   # Binary data receiver
+      - "19711:9711"   # Binary data receiver (SSL)
+      - "15672:5672"   # AMQP
+    environment:
+      - APIM_PROFILE=tm
+      - APIM_DC=1
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9611"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-gw-dc1:
+    image: apim-gw:4.2.0
+    container_name: wso2apim-gw-dc1
+    hostname: wso2apim-gw-dc1
+    ports:
+      - "18280:8280"   # HTTP Gateway
+      - "18243:8243"   # HTTPS Gateway
+      - "19444:9443"   # Management
+    environment:
+      - APIM_PROFILE=gw
+      - APIM_DC=1
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      wso2apim-cp-dc1:
+        condition: service_healthy
+      wso2apim-tm-dc1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8280/", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================
+  # Datacenter 2
+  # ============================================
+  
+  wso2apim-cp-dc2:
+    image: apim-cp:4.2.0
+    container_name: wso2apim-cp-dc2
+    hostname: wso2apim-cp-dc2
+    ports:
+      - "20443:9443"
+      - "20763:9763"
+    environment:
+      - APIM_PROFILE=cp
+      - APIM_DC=2
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9443/carbon/admin/login.jsp", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-tm-dc2:
+    image: apim-tm:4.2.0
+    container_name: wso2apim-tm-dc2
+    hostname: wso2apim-tm-dc2
+    ports:
+      - "20611:9611"
+      - "20711:9711"
+      - "16672:5672"
+    environment:
+      - APIM_PROFILE=tm
+      - APIM_DC=2
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9611"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-gw-dc2:
+    image: apim-gw:4.2.0
+    container_name: wso2apim-gw-dc2
+    hostname: wso2apim-gw-dc2
+    ports:
+      - "19280:8280"
+      - "19243:8243"
+      - "20444:9443"
+    environment:
+      - APIM_PROFILE=gw
+      - APIM_DC=2
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      wso2apim-cp-dc2:
+        condition: service_healthy
+      wso2apim-tm-dc2:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8280/", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================
+  # Datacenter 3
+  # ============================================
+  
+  wso2apim-cp-dc3:
+    image: apim-cp:4.2.0
+    container_name: wso2apim-cp-dc3
+    hostname: wso2apim-cp-dc3
+    ports:
+      - "21443:9443"
+      - "21763:9763"
+    environment:
+      - APIM_PROFILE=cp
+      - APIM_DC=3
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9443/carbon/admin/login.jsp", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-tm-dc3:
+    image: apim-tm:4.2.0
+    container_name: wso2apim-tm-dc3
+    hostname: wso2apim-tm-dc3
+    ports:
+      - "21611:9611"
+      - "21711:9711"
+      - "17672:5672"
+    environment:
+      - APIM_PROFILE=tm
+      - APIM_DC=3
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9611"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-gw-dc3:
+    image: apim-gw:4.2.0
+    container_name: wso2apim-gw-dc3
+    hostname: wso2apim-gw-dc3
+    ports:
+      - "20280:8280"
+      - "20243:8243"
+      - "21444:9443"
+    environment:
+      - APIM_PROFILE=gw
+      - APIM_DC=3
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      wso2apim-cp-dc3:
+        condition: service_healthy
+      wso2apim-tm-dc3:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8280/", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================
+  # Datacenter 4
+  # ============================================
+  
+  wso2apim-cp-dc4:
+    image: apim-cp:4.2.0
+    container_name: wso2apim-cp-dc4
+    hostname: wso2apim-cp-dc4
+    ports:
+      - "22443:9443"
+      - "22763:9763"
+    environment:
+      - APIM_PROFILE=cp
+      - APIM_DC=4
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9443/carbon/admin/login.jsp", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-tm-dc4:
+    image: apim-tm:4.2.0
+    container_name: wso2apim-tm-dc4
+    hostname: wso2apim-tm-dc4
+    ports:
+      - "22611:9611"
+      - "22711:9711"
+      - "18672:5672"
+    environment:
+      - APIM_PROFILE=tm
+      - APIM_DC=4
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9611"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  wso2apim-gw-dc4:
+    image: apim-gw:4.2.0
+    container_name: wso2apim-gw-dc4
+    hostname: wso2apim-gw-dc4
+    ports:
+      - "21280:8280"
+      - "21243:8243"
+      - "22444:9443"
+    environment:
+      - APIM_PROFILE=gw
+      - APIM_DC=4
+    networks:
+      - wso2-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      wso2apim-cp-dc4:
+        condition: service_healthy
+      wso2apim-tm-dc4:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8280/", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+networks:
+  wso2-network:
+    driver: bridge

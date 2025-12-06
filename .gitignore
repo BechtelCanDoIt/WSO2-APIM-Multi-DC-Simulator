@@ -29,3 +29,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# DB Driver - copyrighted...
+mysql-connector-j-9.4.0.jar

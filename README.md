@@ -1,4 +1,4 @@
-# WSO2 API Manager 4.2 Multi-Datacenter Deployment
+# WSO2 API Manager 4.2 Multi-Datacenter Deployment Local Simulator
 
 Complete Docker-based setup for **4 distributed WSO2 APIM environments** with Control Plane (CP), Traffic Manager (TM), and Gateway (GW) components sharing a common MySQL database.
 

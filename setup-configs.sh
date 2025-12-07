@@ -390,6 +390,144 @@ expiry_time = 900
 enable = false
 EOF
 
+# ----------------------------------------------------------------------
+# Cross DC CP to CP JMS event publishers and JNDI configs
+# One set of publishers per CP per remote region
+# ----------------------------------------------------------------------
+
+for dc in 1 2 3 4; do
+  cp_base_dir="config-templates/cp/dc${dc}"
+  cp_conf_dir="${cp_base_dir}/repository/conf"
+  cp_evpub_dir="${cp_base_dir}/repository/deployment/server/eventpublishers"
+
+  mkdir -p "${cp_conf_dir}"
+  mkdir -p "${cp_evpub_dir}"
+
+  for target_dc in 1 2 3 4; do
+    # Skip self
+    if [ "${target_dc}" = "${dc}" ]; then
+      continue
+    fi
+
+    jndi_region_file="${cp_conf_dir}/jndi-region${target_dc}.properties"
+    jndi2_region_file="${cp_conf_dir}/jndi2-region${target_dc}.properties"
+
+    # JNDI for notification, token revocation, key manager, async webhooks
+    cat > "${jndi_region_file}" <<EOF
+connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://dc${target_dc}-cp:5672'
+
+topic.tokenRevocation = tokenRevocation
+topic.keyManager = keyManager
+topic.notification = notification
+topic.asyncWebhooksData = asyncWebhooksData
+EOF
+
+    # JNDI for blocking and async webhooks (throttleData)
+    cat > "${jndi2_region_file}" <<EOF
+connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://dc${target_dc}-cp:5672'
+
+topic.throttleData = throttleData
+topic.asyncWebhooksData = asyncWebhooksData
+EOF
+
+    # Notifications data publisher
+    cat > "${cp_evpub_dir}/notificationJMSPublisherRegion${target_dc}.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="notificationJMSPublisherRegion${target_dc}" statistics="disable"
+trace="disable"
+xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2.apimgt.notification.stream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="jms">
+    <property name="java.naming.factory.initial">org.wso2.andes.jndi.PropertiesFileInitialContextFactory</property>
+    <property name="java.naming.provider.url">repository/conf/jndi-region${target_dc}.properties</property>
+    <property name="transport.jms.DestinationType">topic</property>
+    <property name="transport.jms.Destination">notification</property>
+    <property name="transport.jms.ConcurrentPublishers">allow</property>
+    <property name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</property>
+  </to>
+</eventPublisher>
+EOF
+
+    # Token revocation data publisher
+    cat > "${cp_evpub_dir}/tokenRevocationJMSPublisherRegion${target_dc}.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="tokenRevocationJMSPublisherRegion${target_dc}" statistics="disable"
+trace="disable"
+xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2.apimgt.token.revocation.stream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="jms">
+    <property name="java.naming.factory.initial">org.wso2.andes.jndi.PropertiesFileInitialContextFactory</property>
+    <property name="java.naming.provider.url">repository/conf/jndi-region${target_dc}.properties</property>
+    <property name="transport.jms.DestinationType">topic</property>
+    <property name="transport.jms.Destination">tokenRevocation</property>
+    <property name="transport.jms.ConcurrentPublishers">allow</property>
+    <property name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</property>
+  </to>
+</eventPublisher>
+EOF
+
+    # Key management data publisher
+    cat > "${cp_evpub_dir}/keymgtEventJMSEventPublisherRegion${target_dc}.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="keymgtEventJMSEventPublisherRegion${target_dc}" statistics="disable"
+trace="disable"
+xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2.apimgt.keymgt.stream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="jms">
+    <property name="java.naming.factory.initial">org.wso2.andes.jndi.PropertiesFileInitialContextFactory</property>
+    <property name="java.naming.provider.url">repository/conf/jndi-region${target_dc}.properties</property>
+    <property name="transport.jms.DestinationType">topic</property>
+    <property name="transport.jms.Destination">keyManager</property>
+    <property name="transport.jms.ConcurrentPublishers">allow</property>
+    <property name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</property>
+  </to>
+</eventPublisher>
+EOF
+
+    # Async webhooks data publisher
+    cat > "${cp_evpub_dir}/asyncWebhooksEventPublisher-1.0.0-Region${target_dc}.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="asyncWebhooksEventPublisher-1.0.0-Region${target_dc}" statistics="disable" processing="disable"
+trace="disable"
+xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2.apimgt.webhooks.request.stream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="jms">
+    <property name="java.naming.factory.initial">org.wso2.andes.jndi.PropertiesFileInitialContextFactory</property>
+    <property name="java.naming.provider.url">repository/conf/jndi2-region${target_dc}.properties</property>
+    <property name="transport.jms.DestinationType">topic</property>
+    <property name="transport.jms.Destination">asyncWebhooksData</property>
+    <property name="transport.jms.ConcurrentPublishers">allow</property>
+    <property name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</property>
+  </to>
+</eventPublisher>
+EOF
+
+    # Blocking event data publisher
+    cat > "${cp_evpub_dir}/blockingEventJMSPublisherRegion${target_dc}.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<eventPublisher name="blockingEventJMSPublisherRegion${target_dc}" statistics="disable"
+trace="disable"
+xmlns="http://wso2.org/carbon/eventpublisher">
+  <from streamName="org.wso2.blocking.request.stream" version="1.0.0"/>
+  <mapping customMapping="disable" type="json"/>
+  <to eventAdapterType="jms">
+    <property name="java.naming.factory.initial">org.wso2.andes.jndi.PropertiesFileInitialContextFactory</property>
+    <property name="java.naming.provider.url">repository/conf/jndi2-region${target_dc}.properties</property>
+    <property name="transport.jms.DestinationType">topic</property>
+    <property name="transport.jms.Destination">throttleData</property>
+    <property name="transport.jms.ConcurrentPublishers">allow</property>
+    <property name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</property>
+  </to>
+</eventPublisher>
+EOF
+
+  done
+done
+
     echo "  ✓ Created configuration files for Datacenter $dc"
 done
 

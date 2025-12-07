@@ -14,6 +14,7 @@ services:
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=1
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -48,6 +49,7 @@ services:
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=1
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -82,6 +84,7 @@ services:
     environment:
       - APIM_PROFILE=gw
       - APIM_DC=1
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -125,6 +128,7 @@ services:
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=2
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -159,6 +163,7 @@ services:
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=2
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -193,6 +198,7 @@ services:
     environment:
       - APIM_PROFILE=gw
       - APIM_DC=2
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -236,6 +242,7 @@ services:
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=3
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -270,6 +277,7 @@ services:
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=3
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -304,6 +312,7 @@ services:
     environment:
       - APIM_PROFILE=gw
       - APIM_DC=3
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -347,6 +356,7 @@ services:
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=4
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -381,6 +391,7 @@ services:
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=4
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default
@@ -415,6 +426,7 @@ services:
     environment:
       - APIM_PROFILE=gw
       - APIM_DC=4
+      - TZ=America/Chicago
     networks:
       - wso2-network
       - db_default

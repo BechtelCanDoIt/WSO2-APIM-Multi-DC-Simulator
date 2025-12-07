@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# WSO2 APIM 4.2 Multi-DC Setup Script
-# Creates configuration files for 4 datacenters (dc1-dc4)
-# All instances use offset=0 (no port offset needed with Docker)
+# WSO2 APIM 4.2 Multi-DC Setup Script - TCP Event Hub (No SSL)
+# For Docker testbed environments where all containers share a trusted network
+# This eliminates SSL handshake complexity for demonstration purposes
 
-echo "Creating WSO2 APIM Multi-DC Configuration Structure..."
+echo "Creating WSO2 APIM Multi-DC Configuration with TCP Event Hub..."
+echo "This configuration uses plain TCP for Event Hub (suitable for trusted networks)"
+echo ""
 
-# Define datacenter port mappings
-# Format: HTTPS_MGMT:HTTP_MGMT:GW_HTTP:GW_HTTPS:TM_BINARY:TM_BINARY_SSL:AMQP
-declare -A DATACENTERS=(
-    [1]="19443:19763:18280:18243:19611:19711:15672"
-    [2]="20443:20763:19280:19243:20611:20711:16672"
-    [3]="21443:21763:20280:20243:21611:21711:17672"
-    [4]="22443:22763:21280:21243:22611:22711:18672"
-)
+# Define port mappings for each datacenter
+# These must match docker-compose.yml exactly
+declare -A CP_HTTPS_PORT=([1]="9443" [2]="20443" [3]="21443" [4]="22443")
+declare -A CP_HTTP_PORT=([1]="9763" [2]="20763" [3]="21763" [4]="22763")
+declare -A GW_HTTP_PORT=([1]="18280" [2]="19280" [3]="20280" [4]="21280")
+declare -A GW_HTTPS_PORT=([1]="18243" [2]="19243" [3]="20243" [4]="21243")
 
 # Create directory structure
 for dc in 1 2 3 4; do
@@ -24,8 +24,11 @@ for dc in 1 2 3 4; do
     mkdir -p config-templates/tm/dc${dc}/repository/conf
     mkdir -p config-templates/gw/dc${dc}/repository/conf
     
-    # Parse port mappings
-    IFS=':' read -r https_mgmt http_mgmt gw_http gw_https tm_binary tm_binary_ssl amqp <<< "${DATACENTERS[$dc]}"
+    # Get port values for this DC
+    cp_https=${CP_HTTPS_PORT[$dc]}
+    cp_http=${CP_HTTP_PORT[$dc]}
+    gw_http=${GW_HTTP_PORT[$dc]}
+    gw_https=${GW_HTTPS_PORT[$dc]}
     
     # ========================================
     # Create Control Plane deployment.toml
@@ -63,7 +66,7 @@ validationInterval = 30000
 
 [database.shared_db]
 type = "mysql"
-url = "jdbc:mysql://mysql_container:3306/shared_db?useSSL=false&amp;llowPublicKeyRetrieval=true"
+url = "jdbc:mysql://mysql_container:3306/shared_db?useSSL=false&amp;allowPublicKeyRetrieval=true"
 username = "wso2carbon"
 password = "wso2carbon"
 driver = "com.mysql.cj.jdbc.Driver"
@@ -88,7 +91,7 @@ file_name = "client-truststore.jks"
 type = "JKS"
 password = "wso2carbon"
 
-# Event Hub Configuration for CP Sync
+# Event Hub Configuration - TCP only (no SSL for simplicity in testbed)
 [apim.event_hub]
 enable = true
 username = "\$ref{super_admin.username}"
@@ -96,23 +99,20 @@ password = "\$ref{super_admin.password}"
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
 event_listening_endpoints = ["tcp://wso2apim-cp-dc${dc}:5672"]
 
+# Cross-DC Event Hub Publishing - All CPs publish to all other CPs
 [[apim.event_hub.publish.url_group]]
 urls = ["tcp://wso2apim-cp-dc1:5672"]
-auth_urls = ["ssl://wso2apim-cp-dc1:5672"]
 
 [[apim.event_hub.publish.url_group]]
 urls = ["tcp://wso2apim-cp-dc2:5672"]
-auth_urls = ["ssl://wso2apim-cp-dc2:5672"]
 
 [[apim.event_hub.publish.url_group]]
 urls = ["tcp://wso2apim-cp-dc3:5672"]
-auth_urls = ["ssl://wso2apim-cp-dc3:5672"]
 
 [[apim.event_hub.publish.url_group]]
 urls = ["tcp://wso2apim-cp-dc4:5672"]
-auth_urls = ["ssl://wso2apim-cp-dc4:5672"]
 
-# Traffic Manager Configuration
+# Traffic Manager Configuration (CP connects to its local TM)
 [apim.throttling]
 service_url = "https://wso2apim-tm-dc${dc}:9443/services/"
 throttle_decision_endpoints = ["tcp://wso2apim-tm-dc${dc}:5672"]
@@ -133,7 +133,7 @@ traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc3:9711"]
 traffic_manager_urls = ["tcp://wso2apim-tm-dc4:9611"]
 traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc4:9711"]
 
-# Gateway Configuration
+# Gateway Configuration - External URLs use host-mapped ports
 [[apim.gateway.environment]]
 name = "Production and Sandbox - DC${dc}"
 type = "hybrid"
@@ -150,60 +150,7 @@ https_endpoint = "https://localhost:${gw_https}"
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
 
 [apim.devportal]
-url = "https://localhost:${https_mgmt}/devportal"
-
-# External JNDI Event Hub Configurations
-[[event_listener]]
-id = "event_hub_external_dc1"
-type = "org.wso2.carbon.apimgt.impl.notification.EventHubEventListener"
-name = "event_hub_external_dc1"
-order = 10
-[event_listener.properties]
-notification.event.publisher.type = "external"
-notification.event.publisher.event.waiting.time = 5000
-
-[[event_listener.properties.jndi_connection_factories]]
-java.naming.factory.initial = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory"
-connectionfactory.QueueConnectionFactory = "amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc1:5672'"
-
-[[event_listener]]
-id = "event_hub_external_dc2"
-type = "org.wso2.carbon.apimgt.impl.notification.EventHubEventListener"
-name = "event_hub_external_dc2"
-order = 11
-[event_listener.properties]
-notification.event.publisher.type = "external"
-notification.event.publisher.event.waiting.time = 5000
-
-[[event_listener.properties.jndi_connection_factories]]
-java.naming.factory.initial = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory"
-connectionfactory.QueueConnectionFactory = "amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc2:5672'"
-
-[[event_listener]]
-id = "event_hub_external_dc3"
-type = "org.wso2.carbon.apimgt.impl.notification.EventHubEventListener"
-name = "event_hub_external_dc3"
-order = 12
-[event_listener.properties]
-notification.event.publisher.type = "external"
-notification.event.publisher.event.waiting.time = 5000
-
-[[event_listener.properties.jndi_connection_factories]]
-java.naming.factory.initial = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory"
-connectionfactory.QueueConnectionFactory = "amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc3:5672'"
-
-[[event_listener]]
-id = "event_hub_external_dc4"
-type = "org.wso2.carbon.apimgt.impl.notification.EventHubEventListener"
-name = "event_hub_external_dc4"
-order = 13
-[event_listener.properties]
-notification.event.publisher.type = "external"
-notification.event.publisher.event.waiting.time = 5000
-
-[[event_listener.properties.jndi_connection_factories]]
-java.naming.factory.initial = "org.wso2.andes.jndi.PropertiesFileInitialContextFactory"
-connectionfactory.QueueConnectionFactory = "amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc4:5672'"
+url = "https://localhost:${cp_https}/devportal"
 EOF
 
     # ========================================
@@ -267,6 +214,14 @@ file_name = "client-truststore.jks"
 type = "JKS"
 password = "wso2carbon"
 
+# Event Hub Configuration - TM subscribes to CP Event Hub to receive policy updates
+[apim.event_hub]
+enable = true
+username = "\$ref{super_admin.username}"
+password = "\$ref{super_admin.password}"
+service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
+event_listening_endpoints = ["tcp://wso2apim-cp-dc${dc}:5672"]
+
 # Traffic Manager Configuration
 [apim.throttling]
 enable_data_publishing = true
@@ -283,7 +238,7 @@ start_delay = 0
 hostName = "0.0.0.0"
 port = 11224
 
-# TM Clustering
+# TM Clustering - All TMs know about each other
 [[apim.throttling.url_group]]
 traffic_manager_urls = ["tcp://wso2apim-tm-dc1:9611"]
 traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc1:9711"]
@@ -300,7 +255,7 @@ traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc3:9711"]
 traffic_manager_urls = ["tcp://wso2apim-tm-dc4:9611"]
 traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc4:9711"]
 
-# Event Publisher Configuration
+# Event Publisher Configuration for TM clustering
 [apim.throttling.event_publisher]
 receiver_username = "\$ref{super_admin.username}"
 receiver_password = "\$ref{super_admin.password}"
@@ -387,7 +342,7 @@ password = "wso2carbon"
 [apim.key_manager]
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
 
-# Traffic Manager Configuration
+# Traffic Manager Configuration - GW connects to its local TM for throttle decisions
 [apim.throttling]
 service_url = "https://wso2apim-tm-dc${dc}:9443/services/"
 throttle_decision_endpoints = ["tcp://wso2apim-tm-dc${dc}:5672"]
@@ -410,7 +365,7 @@ traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc3:9711"]
 traffic_manager_urls = ["tcp://wso2apim-tm-dc4:9611"]
 traffic_manager_auth_urls = ["ssl://wso2apim-tm-dc4:9711"]
 
-# Event Hub Configuration
+# Event Hub Configuration - GW subscribes to CP Event Hub for API/App updates
 [apim.event_hub]
 enable = true
 username = "\$ref{super_admin.username}"
@@ -443,20 +398,27 @@ echo "============================================"
 echo "Configuration setup complete!"
 echo "============================================"
 echo ""
+echo "📋 Event Hub Configuration (TCP - No SSL):"
+echo "   - Each CP runs Event Hub broker on port 5672"
+echo "   - All CPs publish events to all other CPs (cross-DC sync)"
+echo "   - TMs subscribe to their local CP's Event Hub for policy updates"
+echo "   - GWs subscribe to their local CP's Event Hub for API/App updates"
+echo ""
+echo "📋 Traffic Manager Configuration:"
+echo "   - Each TM runs JMS broker on port 5672 for throttle decisions"
+echo "   - Binary receiver on port 9611 (TCP) for event publishing"
+echo "   - Binary auth on port 9711 (SSL)"
+echo "   - All TMs form a cluster for throttling sync"
+echo ""
 echo "Directory structure created:"
 echo "  config-templates/"
-echo "    ├── cp/{dc1,dc2,dc3,dc4}/repository/conf/"
-echo "    ├── tm/{dc1,dc2,dc3,dc4}/repository/conf/"
-echo "    └── gw/{dc1,dc2,dc3,dc4}/repository/conf/"
-echo ""
-echo "All instances use offset=0 (Docker handles port isolation)"
+echo "    ├── cp/{dc1,dc2,dc3,dc4}/repository/conf/deployment.toml"
+echo "    ├── tm/{dc1,dc2,dc3,dc4}/repository/conf/deployment.toml"
+echo "    └── gw/{dc1,dc2,dc3,dc4}/repository/conf/deployment.toml"
 echo ""
 echo "Next steps:"
 echo "  1. Build Docker images: ./build.sh"
 echo "  2. Start services: docker-compose up -d"
-echo "  3. Access Control Planes at:"
-echo "     - DC1: https://localhost:19443/carbon"
-echo "     - DC2: https://localhost:20443/carbon"
-echo "     - DC3: https://localhost:21443/carbon"
-echo "     - DC4: https://localhost:22443/carbon"
+echo "  3. Wait for all containers to be healthy"
+echo "  4. Test Event Hub sync: Create API in DC1, verify in DC2/3/4"
 echo ""

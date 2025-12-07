@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ============================================
   # Datacenter 1
@@ -10,8 +8,9 @@ services:
     container_name: wso2apim-cp-dc1
     hostname: localhost 
     ports:
-      - "9443:9443"   # HTTPS Management
-      - "9763:9763"   # HTTP Management
+      - "9443:9443"    # HTTPS Management
+      - "9763:9763"    # HTTP Management
+      - "15672:5672"   # AMQP (Event Hub) - TCP
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=1
@@ -45,7 +44,7 @@ services:
     ports:
       - "19611:9611"   # Binary data receiver
       - "19711:9711"   # Binary data receiver (SSL)
-      - "15672:5672"   # AMQP
+      - "25672:5672"   # JMS (throttle decisions)
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=1
@@ -120,8 +119,9 @@ services:
     container_name: wso2apim-cp-dc2
     hostname: localhost
     ports:
-      - "20443:9443"
-      - "20763:9763"
+      - "20443:9443"   # HTTPS Management
+      - "20763:9763"   # HTTP Management
+      - "16672:5672"   # AMQP (Event Hub) - TCP
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=2
@@ -155,7 +155,7 @@ services:
     ports:
       - "20611:9611"
       - "20711:9711"
-      - "16672:5672"
+      - "26672:5672"   # JMS (throttle decisions)
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=2
@@ -230,8 +230,9 @@ services:
     container_name: wso2apim-cp-dc3
     hostname: localhost
     ports:
-      - "21443:9443"
-      - "21763:9763"
+      - "21443:9443"   # HTTPS Management
+      - "21763:9763"   # HTTP Management
+      - "17672:5672"   # AMQP (Event Hub) - TCP
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=3
@@ -265,7 +266,7 @@ services:
     ports:
       - "21611:9611"
       - "21711:9711"
-      - "17672:5672"
+      - "27672:5672"   # JMS (throttle decisions)
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=3
@@ -340,8 +341,9 @@ services:
     container_name: wso2apim-cp-dc4
     hostname: localhost
     ports:
-      - "22443:9443"
-      - "22763:9763"
+      - "22443:9443"   # HTTPS Management
+      - "22763:9763"   # HTTP Management
+      - "18672:5672"   # AMQP (Event Hub) - TCP
     environment:
       - APIM_PROFILE=cp
       - APIM_DC=4
@@ -375,7 +377,7 @@ services:
     ports:
       - "22611:9611"
       - "22711:9711"
-      - "18672:5672"
+      - "28672:5672"   # JMS (throttle decisions)
     environment:
       - APIM_PROFILE=tm
       - APIM_DC=4

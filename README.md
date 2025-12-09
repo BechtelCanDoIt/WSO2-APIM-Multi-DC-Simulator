@@ -272,7 +272,7 @@ docker-compose ps
 
 ## Memory Use
 
-Once running you'll use about 35 Gig.
+Once running you'll use about 24 Gig plus Databae memory.
 
 ```
 CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS

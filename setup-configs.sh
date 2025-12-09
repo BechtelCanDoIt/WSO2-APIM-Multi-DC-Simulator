@@ -30,6 +30,15 @@ for dc in 1 2 3 4; do
     gw_http=${GW_HTTP_PORT[$dc]}
     gw_https=${GW_HTTPS_PORT[$dc]}
     
+    case "${dc}" in
+    1|2)
+      EVENT_ENDPOINTS='["tcp://wso2apim-cp-dc1:5672", "tcp://wso2apim-cp-dc2:5672"]'
+      ;;
+    3|4)
+      EVENT_ENDPOINTS='["tcp://wso2apim-cp-dc3:5672", "tcp://wso2apim-cp-dc4:5672"]'
+      ;;
+    esac    
+
     # ========================================
     # Create Control Plane deployment.toml
     # ========================================
@@ -97,7 +106,7 @@ enable = true
 username = "\$ref{super_admin.username}"
 password = "\$ref{super_admin.password}"
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
-event_listening_endpoints = ["tcp://wso2apim-cp-dc${dc}:5672"]
+event_listening_endpoints = ${EVENT_ENDPOINTS}
 
 # Cross-DC Event Hub Publishing - All CPs publish to all other CPs
 [[apim.event_hub.publish.url_group]]
@@ -220,7 +229,7 @@ enable = true
 username = "\$ref{super_admin.username}"
 password = "\$ref{super_admin.password}"
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
-event_listening_endpoints = ["tcp://wso2apim-cp-dc${dc}:5672"]
+event_listening_endpoints = ${EVENT_ENDPOINTS}
 
 # Traffic Manager Configuration
 [apim.throttling]
@@ -371,7 +380,7 @@ enable = true
 username = "\$ref{super_admin.username}"
 password = "\$ref{super_admin.password}"
 service_url = "https://wso2apim-cp-dc${dc}:9443/services/"
-event_listening_endpoints = ["tcp://wso2apim-cp-dc${dc}:5672"]
+event_listening_endpoints = ${EVENT_ENDPOINTS}
 
 # Cache Configuration
 [apim.cache.gateway_token]
@@ -414,7 +423,7 @@ for dc in 1 2 3 4; do
 
     # JNDI for notification, token revocation, key manager, async webhooks
     cat > "${jndi_region_file}" <<EOF
-connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://dc${target_dc}-cp:5672'
+connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc${target_dc}:5672?retries='5'%26connectdelay='50';'
 
 topic.tokenRevocation = tokenRevocation
 topic.keyManager = keyManager
@@ -424,7 +433,7 @@ EOF
 
     # JNDI for blocking and async webhooks (throttleData)
     cat > "${jndi2_region_file}" <<EOF
-connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://dc${target_dc}-cp:5672'
+connectionfactory.TopicConnectionFactory = amqp://admin:admin@clientid/carbon?brokerlist='tcp://wso2apim-cp-dc${target_dc}:5672?retries='5'%26connectdelay='50';'
 
 topic.throttleData = throttleData
 topic.asyncWebhooksData = asyncWebhooksData

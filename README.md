@@ -41,22 +41,156 @@ chmod +x setup-configs.sh
 
 This creates the directory structure:
 ```
+tree config-templates/
 config-templates/
-├── cp/
-│   ├── dc1/repository/conf/deployment.toml
-│   ├── dc2/repository/conf/deployment.toml
-│   ├── dc3/repository/conf/deployment.toml
-│   └── dc4/repository/conf/deployment.toml
-├── tm/
-│   ├── dc1/repository/conf/deployment.toml
-│   ├── dc2/repository/conf/deployment.toml
-│   ├── dc3/repository/conf/deployment.toml
-│   └── dc4/repository/conf/deployment.toml
-└── gw/
-    ├── dc1/repository/conf/deployment.toml
-    ├── dc2/repository/conf/deployment.toml
-    ├── dc3/repository/conf/deployment.toml
-    └── dc4/repository/conf/deployment.toml
+├── cp
+│   ├── dc1
+│   │   └── repository
+│   │       ├── conf
+│   │       │   ├── deployment.toml
+│   │       │   ├── jndi2-region2.properties
+│   │       │   ├── jndi2-region3.properties
+│   │       │   ├── jndi2-region4.properties
+│   │       │   ├── jndi-region2.properties
+│   │       │   ├── jndi-region3.properties
+│   │       │   └── jndi-region4.properties
+│   │       └── deployment
+│   │           └── server
+│   │               └── eventpublishers
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region2.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region3.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region4.xml
+│   │                   ├── blockingEventJMSPublisherRegion2.xml
+│   │                   ├── blockingEventJMSPublisherRegion3.xml
+│   │                   ├── blockingEventJMSPublisherRegion4.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion2.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion3.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion4.xml
+│   │                   ├── notificationJMSPublisherRegion2.xml
+│   │                   ├── notificationJMSPublisherRegion3.xml
+│   │                   ├── notificationJMSPublisherRegion4.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion2.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion3.xml
+│   │                   └── tokenRevocationJMSPublisherRegion4.xml
+│   ├── dc2
+│   │   └── repository
+│   │       ├── conf
+│   │       │   ├── deployment.toml
+│   │       │   ├── jndi2-region1.properties
+│   │       │   ├── jndi2-region3.properties
+│   │       │   ├── jndi2-region4.properties
+│   │       │   ├── jndi-region1.properties
+│   │       │   ├── jndi-region3.properties
+│   │       │   └── jndi-region4.properties
+│   │       └── deployment
+│   │           └── server
+│   │               └── eventpublishers
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region1.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region3.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region4.xml
+│   │                   ├── blockingEventJMSPublisherRegion1.xml
+│   │                   ├── blockingEventJMSPublisherRegion3.xml
+│   │                   ├── blockingEventJMSPublisherRegion4.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion1.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion3.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion4.xml
+│   │                   ├── notificationJMSPublisherRegion1.xml
+│   │                   ├── notificationJMSPublisherRegion3.xml
+│   │                   ├── notificationJMSPublisherRegion4.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion1.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion3.xml
+│   │                   └── tokenRevocationJMSPublisherRegion4.xml
+│   ├── dc3
+│   │   └── repository
+│   │       ├── conf
+│   │       │   ├── deployment.toml
+│   │       │   ├── jndi2-region1.properties
+│   │       │   ├── jndi2-region2.properties
+│   │       │   ├── jndi2-region4.properties
+│   │       │   ├── jndi-region1.properties
+│   │       │   ├── jndi-region2.properties
+│   │       │   └── jndi-region4.properties
+│   │       └── deployment
+│   │           └── server
+│   │               └── eventpublishers
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region1.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region2.xml
+│   │                   ├── asyncWebhooksEventPublisher-1.0.0-Region4.xml
+│   │                   ├── blockingEventJMSPublisherRegion1.xml
+│   │                   ├── blockingEventJMSPublisherRegion2.xml
+│   │                   ├── blockingEventJMSPublisherRegion4.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion1.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion2.xml
+│   │                   ├── keymgtEventJMSEventPublisherRegion4.xml
+│   │                   ├── notificationJMSPublisherRegion1.xml
+│   │                   ├── notificationJMSPublisherRegion2.xml
+│   │                   ├── notificationJMSPublisherRegion4.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion1.xml
+│   │                   ├── tokenRevocationJMSPublisherRegion2.xml
+│   │                   └── tokenRevocationJMSPublisherRegion4.xml
+│   └── dc4
+│       └── repository
+│           ├── conf
+│           │   ├── deployment.toml
+│           │   ├── jndi2-region1.properties
+│           │   ├── jndi2-region2.properties
+│           │   ├── jndi2-region3.properties
+│           │   ├── jndi-region1.properties
+│           │   ├── jndi-region2.properties
+│           │   └── jndi-region3.properties
+│           └── deployment
+│               └── server
+│                   └── eventpublishers
+│                       ├── asyncWebhooksEventPublisher-1.0.0-Region1.xml
+│                       ├── asyncWebhooksEventPublisher-1.0.0-Region2.xml
+│                       ├── asyncWebhooksEventPublisher-1.0.0-Region3.xml
+│                       ├── blockingEventJMSPublisherRegion1.xml
+│                       ├── blockingEventJMSPublisherRegion2.xml
+│                       ├── blockingEventJMSPublisherRegion3.xml
+│                       ├── keymgtEventJMSEventPublisherRegion1.xml
+│                       ├── keymgtEventJMSEventPublisherRegion2.xml
+│                       ├── keymgtEventJMSEventPublisherRegion3.xml
+│                       ├── notificationJMSPublisherRegion1.xml
+│                       ├── notificationJMSPublisherRegion2.xml
+│                       ├── notificationJMSPublisherRegion3.xml
+│                       ├── tokenRevocationJMSPublisherRegion1.xml
+│                       ├── tokenRevocationJMSPublisherRegion2.xml
+│                       └── tokenRevocationJMSPublisherRegion3.xml
+├── gw
+│   ├── dc1
+│   │   └── repository
+│   │       └── conf
+│   │           └── deployment.toml
+│   ├── dc2
+│   │   └── repository
+│   │       └── conf
+│   │           └── deployment.toml
+│   ├── dc3
+│   │   └── repository
+│   │       └── conf
+│   │           └── deployment.toml
+│   └── dc4
+│       └── repository
+│           └── conf
+│               └── deployment.toml
+└── tm
+    ├── dc1
+    │   └── repository
+    │       └── conf
+    │           └── deployment.toml
+    ├── dc2
+    │   └── repository
+    │       └── conf
+    │           └── deployment.toml
+    ├── dc3
+    │   └── repository
+    │       └── conf
+    │           └── deployment.toml
+    └── dc4
+        └── repository
+            └── conf
+                └── deployment.toml
+
 ```
 
 ### 2. Initialize Database
@@ -99,8 +233,6 @@ docker logs -f wso2apim-cp-dc1
 docker-compose ps
 ```
 
-Startup typically takes 2-3 minutes per service.
-
 ## Port Mappings
 
 ### Datacenter 1
@@ -136,6 +268,28 @@ Startup typically takes 2-3 minutes per service.
 - **DC4 Admin**: https://localhost:22443/admin
 
 **Default credentials**: `admin` / `admin`
+
+
+## Memory Use
+
+Once running you'll use about 35 Gig.
+
+```
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+b8fc625a1cbd   wso2apim-gw-dc2   1.14%     1.423GiB / 2GiB       71.16%    4.14MB / 3.44MB   4.1kB / 332MB     1059
+841f979a4955   wso2apim-gw-dc4   0.88%     1.448GiB / 2GiB       72.40%    4.14MB / 3.45MB   8.19kB / 330MB    1056
+b034c942a5ae   wso2apim-gw-dc3   3.19%     1.471GiB / 2GiB       73.55%    4.14MB / 3.44MB   147kB / 243MB     1064
+0d116cf528a2   wso2apim-gw-dc1   1.77%     1.547GiB / 2GiB       77.34%    4.11MB / 3.41MB   0B / 331MB        1059
+5111a31cbeca   wso2apim-tm-dc4   0.56%     1.393GiB / 2GiB       69.64%    4.93MB / 3.13MB   111kB / 171MB     536
+1f42b429fecc   wso2apim-cp-dc2   0.76%     1.637GiB / 2GiB       81.86%    85MB / 64.2MB     139kB / 206MB     417
+0a31074e9911   wso2apim-tm-dc1   0.84%     1.524GiB / 2GiB       76.21%    4.92MB / 3.13MB   98.3kB / 174MB    535
+ca02d7844e96   wso2apim-tm-dc3   0.93%     1.305GiB / 2GiB       65.24%    4.93MB / 3.13MB   229kB / 115MB     538
+c805597ffd92   wso2apim-cp-dc1   4.39%     1.712GiB / 2GiB       85.61%    86.3MB / 68.9MB   201kB / 287MB     520
+6b0573c9ef80   wso2apim-cp-dc4   0.65%     1.657GiB / 2GiB       82.83%    85MB / 64.2MB     180kB / 208MB     407
+c6a4bf85536d   wso2apim-cp-dc3   1.38%     1.632GiB / 2GiB       81.58%    85.6MB / 64.7MB   197kB / 213MB     516
+af9da0d2da2e   wso2apim-tm-dc2   0.74%     1.359GiB / 2GiB       67.94%    4.93MB / 3.13MB   119kB / 176MB     540
+b6b6e7b72c3a   mysql_container   0.33%     955.3MiB / 62.56GiB   1.49%     1.13GB / 1.46GB   67.4MB / 2.25GB   71   << external of this project
+```
 
 ## Testing Event Hub Synchronization
 

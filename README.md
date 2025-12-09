@@ -377,6 +377,75 @@ Each Gateway:
 
 ## Troubleshooting
 
+### Runtime Debugging With log4j2.properties file
+
+Event hub - Control plane publish and artifact sync
+```
+logger = apimEventing, apimNotification, apimImpl, …
+
+logger.apimEventing.name = org.wso2.carbon.apimgt.eventing
+logger.apimEventing.level = DEBUG
+
+logger.apimNotification.name = org.wso2.carbon.apimgt.notification
+logger.apimNotification.level = DEBUG
+
+logger.apimImpl.name = org.wso2.carbon.apimgt.impl
+logger.apimImpl.level = DEBUG
+```
+
+Gateway artifact pull and request path
+```
+logger = apimGateway, apimGatewayHandlers, …
+
+
+Gateway core and handlers
+logger.apimGateway.name = org.wso2.carbon.apimgt.gateway
+logger.apimGateway.level = DEBUG
+
+logger.apimGatewayHandlers.name = org.wso2.carbon.apimgt.gateway.handlers
+logger.apimGatewayHandlers.level = DEBUG
+
+
+Gateway throttling decisions
+logger = apimGwThrottling, …
+
+logger.apimGwThrottling.name = org.wso2.carbon.apimgt.gateway.throttling 
+logger.apimGwThrottling.level = DEBUG 
+
+# ALTERNATIVE - More specific handler path 
+logger.apimGwThrottlingHandler.name = org.wso2.carbon.apimgt.gateway.handlers.throttling 
+logger.apimGwThrottlingHandler.level = DEBUG 
+
+
+# For binary data stream throttling 
+logger.apimGwThrottlingDataPublisher.name = org.wso2.carbon.apimgt.gateway.throttling.publisher 
+logger.apimGwThrottlingDataPublisher.level = DEBUG
+```
+
+
+Traffic manager throttling engine and policy deploy
+```
+logger = apimThrottling, apimThrottlingsiddhi, …
+
+logger.apimThrottling.name = org.wso2.carbon.apimgt.throttling
+logger.apimThrottling.level = DEBUG
+
+logger.apimThrottlingSiddhi.name = org.wso2.carbon.apimgt.throttling.siddhi
+logger.apimThrottlingSiddhi.level = DEBUG
+```
+
+Token issue and validate from the APIM side
+This is still handled mainly in the identity product but APIM itself logs some parts of token validation and cache
+```
+logger = apimKeymgt, apimKeymgtHandler, …
+
+logger.apimKeymgt.name = org.wso2.carbon.apimgt.keymgt
+logger.apimKeymgt.level = DEBUG
+
+logger.apimKeymgtHandlers.name = org.wso2.carbon.apimgt.keymgt.handlers
+logger.apimKeymgtHandlers.level = DEBUG
+```
+
 ### Containers Won't Start
 
 **Check logs**:
@@ -527,6 +596,7 @@ docker exec -it wso2apim-cp-dc1 bash
 - [Profile Details WSO2 APIM Distributed Deployment](https://apim.docs.wso2.com/en/latest/install-and-setup/setup/distributed-deployment/deploying-wso2-api-m-in-a-distributed-setup/)
 - [Securing WSO2 APIM Event Hub](https://apim.docs.wso2.com/en/latest/includes/deploy/enable-jms-ssl-for-eventhub/)
 - [WSO2 Docker Images](https://docker.wso2.com)
+- [Deployment Pattern: Distributed APIM Manager System](https://medium.com/@bernardolrodrigues/deployment-pattern-distributed-api-manager-system-4be1430bb790) 
 
 ## Support
 

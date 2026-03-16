@@ -1,4 +1,14 @@
-# WSO2 API Manager 4.2 Multi-Datacenter Deployment Local Simulator
+# WSO2 API Manager v4.x.0 Multi-Datacenter Deployment Local Simulator / Example Deployment Implementation
+
+## Note: 
+The key element of this project is to point out the need for the custom event publisher configurations. 
+
+Official Details here: [Step 3 configure the Communication Between Control Plane Nodes Across Regions](https://apim.docs.wso2.com/en/latest/install-and-setup/setup/multi-dc-deployment/configuring-multi-dc-deployment-pattern-1/#step-3-configure-the-communication-between-control-plane-nodes-across-regions)
+
+## Note2:
+WARNING: THIS IS A PROJECT IN PROGRESS AND MAY NOT RUN CORRECTLY AT THIS TIME.
+
+---
 
 Complete Docker-based setup for **4 distributed WSO2 APIM environments** with Control Plane (CP), Traffic Manager (TM), and Gateway (GW) components sharing a common MySQL database.
 
